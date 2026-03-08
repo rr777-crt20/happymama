@@ -1,234 +1,567 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кликер 8 Марта</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f9e3e3 0%, #fad0d0 100%);
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            position: relative;
+        }
+        .game-container {
+            max-width: 780px;
+            width: 100%;
+            background: rgba(255, 250, 240, 0.75);
+            backdrop-filter: blur(8px);
+            border-radius: 64px 64px 48px 48px;
+            box-shadow: 0 20px 40px rgba(180, 60, 100, 0.3), 0 0 0 2px #ffb7c5 inset, 0 0 0 4px #fff9 inset;
+            padding: 32px 24px 40px;
+            transition: 0.2s;
+        }
+        h1 {
+            text-align: center;
+            margin: 0 0 8px 0;
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #c72e5a, #ec7a9c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 4px 4px 12px rgba(220, 120, 140, 0.3);
+            letter-spacing: 2px;
+        }
+        .sub {
+            text-align: center;
+            font-size: 1.4rem;
+            margin-top: -10px;
+            margin-bottom: 24px;
+            color: #b34b6b;
+            font-weight: 500;
+            font-style: italic;
+        }
+        .score-panel {
+            background: #ffeaee;
+            border-radius: 120px;
+            padding: 24px 28px;
+            margin: 16px 0 24px;
+            border: 3px solid white;
+            box-shadow: 0 8px 0 #b35f7a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .flowers-count {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #872341;
+            background: #fff2d7;
+            padding: 8px 32px;
+            border-radius: 60px;
+            box-shadow: 0 4px 0 #d09eae;
+        }
+        .flowers-count span {
+            font-size: 2.6rem;
+            line-height: 1;
+        }
+        .bonus-info {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .badge {
+            background: #fccfd7;
+            padding: 12px 22px;
+            border-radius: 48px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #701f39;
+            box-shadow: 0 3px 0 #b26b81;
+            border: 2px solid #ffeef2;
+        }
+        .badge strong {
+            font-size: 1.8rem;
+            margin-right: 6px;
+        }
+        .basket-zone {
+            background: #fbd7e0;
+            border-radius: 100px 100px 60px 60px;
+            padding: 28px 18px 18px 18px;
+            margin: 20px 0 28px;
+            border: 5px dashed #ff95a8;
+            border-top: 3px solid #ffc0cb;
+            box-shadow: 0 18px 0 #ac657b, inset 0 -8px 10px #feb0c0;
+            position: relative;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: 0.1s;
+        }
+        .basket-img {
+            font-size: 5rem;
+            filter: drop-shadow(8px 16px 0 #a95270);
+            margin-top: -20px;
+            pointer-events: none;
+        }
+        .fall-area {
+            position: relative;
+            width: 100%;
+            height: 100px;
+            overflow: hidden;
+        }
+        .click-button {
+            background: #ff8aae;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            padding: 24px 50px;
+            border-radius: 60px;
+            box-shadow: 0 14px 0 #b32e5a, 0 10px 30px #ffb6c1;
+            cursor: pointer;
+            transition: 0.04s linear;
+            width: fit-content;
+            margin: 8px auto 16px;
+            border: 3px solid #ffeef4;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            transform: translateY(0);
+        }
+        .click-button:active {
+            box-shadow: 0 6px 0 #b32e5a;
+            transform: translateY(8px);
+        }
+        .shop {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: center;
+            margin: 40px 0 20px;
+        }
+        .upgrade-card {
+            background: #ffd9e2;
+            border-radius: 48px;
+            padding: 20px 24px;
+            flex: 1 1 220px;
+            border: 3px solid white;
+            box-shadow: 0 12px 0 #9e5e74;
+            transition: 0.1s;
+            text-align: center;
+        }
+        .upgrade-card h3 {
+            font-size: 1.8rem;
+            margin: 0 0 8px;
+            color: #a13053;
+        }
+        .upgrade-card p {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin: 10px 0;
+        }
+        .price {
+            font-size: 2rem;
+            background: #fde0e8;
+            border-radius: 40px;
+            padding: 8px 8px;
+            display: inline-block;
+            margin: 8px 0;
+        }
+        .buy-btn {
+            background: #fc97b4;
+            border: none;
+            font-size: 1.6rem;
+            font-weight: 600;
+            padding: 12px 20px;
+            border-radius: 40px;
+            color: white;
+            box-shadow: 0 7px 0 #9f3f5b;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.04s linear;
+            border: 2px solid #fff3f6;
+            transform: translateY(0);
+        }
+        .buy-btn:active {
+            box-shadow: 0 3px 0 #9f3f5b;
+            transform: translateY(4px);
+        }
+        .buy-btn:disabled {
+            opacity: 0.35;
+            box-shadow: 0 7px 0 #7f4d5b;
+            pointer-events: none;
+            filter: grayscale(0.4);
+        }
+        .victory-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 215, 220, 0.97);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            backdrop-filter: blur(14px);
+            flex-direction: column;
+            animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .victory-text {
+            font-size: 12vw;
+            font-weight: 900;
+            color: #c72e5a;
+            text-shadow: 8px 12px 0 #ffb8c9, 12px 18px 30px #ff92ae;
+            line-height: 1.1;
+            transform: rotate(-2deg);
+            background: #fff9ef;
+            padding: 20px 60px;
+            border-radius: 200px;
+            border: 8px solid white;
+            box-shadow: 0 30px 40px #d45d80;
+            margin-bottom: 30px;
+        }
+        .victory-sub {
+            font-size: 3rem;
+            background: white;
+            padding: 16px 40px;
+            border-radius: 60px;
+            color: #b64b6b;
+        }
+        .reset-btn {
+            margin-top: 30px;
+            background: white;
+            border: none;
+            font-size: 2rem;
+            padding: 18px 40px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #a03456;
+            box-shadow: 0 6px 0 #b37b8b;
+        }
+        @keyframes pop {
+            0% { transform: scale(0.2); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .flower-emoji-fall {
+            position: absolute;
+            font-size: 2.4rem;
+            left: 45%;
+            bottom: 80%;
+            animation: fall 0.8s forwards ease-in;
+            pointer-events: none;
+            z-index: 20;
+            filter: drop-shadow(2px 6px 3px #e89bb0);
+        }
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            70% { opacity: 0.9; }
+            100% { transform: translateY(240px) rotate(340deg); opacity: 0; }
+        }
+        footer {
+            text-align: center;
+            color: #ab7082;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container" id="gameContainer">
+        <h1>🌸 8 МАРТА 🌸</h1>
+        <div class="sub">собери букет в корзину</div>
 
-<html>
-     <head>
-        <h1 class = "h1">С ДНЁМ РОЖДЕНИЯ МАМА!</h1>
-        </head>
-    <body class = "fonne">
-        <style>
-.h1{
-    text-align: center;
-    background-color: greenyellow; 
-    animation: bounce 5s ease-out;
-}
-@keyframes bounce{
-    0% {transform: translateY(-100%);}
-     50% {transform: translateY(-50%) scaleY(1.5);}
-      100% {transform: translateY(-0%) scaleY(1);}
-}
-#press{
-    border-radius: 100%;
-    font-size: 80px;
-    background-color: lightgreen;
-    text-align: center;
-}
-#raibow1{
-  text-align: center;
-  font-size:100px;
-  animation: w1 10s ease-in-out;
-}
-#raibow2{
-  text-align: center;
-  font-size:100px;
-  animation: w1 10s ease-in-out;
-}
-#raibow3{
-  text-align: center;
-  font-size:100px;
-  animation: w1 10s ease-in-out;
-}
-#raibow4{
-  text-align: center;
-  font-size:100px;
-  animation: w1 10s ease-in-out;
-}
-#raibow5{
-  text-align: center;
-  font-size:50px;
-  animation: w1 10s ease-in-out;
-}
-@keyframes w1 {
-    0% {color: blue;}
-    10% {color: rgb(255, 238, 0);}
-    20% {color: rgba(0, 0, 0, 0.978);}
-    30% {color: rgb(0, 217, 255);}
-    40% {color: rgb(0, 255, 136);}
-    50% {color: rgb(134, 134, 227);}
-    60% {color: rgb(133, 255, 224);}
-    70% {color: rgb(255, 13, 215);}
-    80% {color: rgb(255, 0, 128);}
-    90% {color: rgb(204, 255, 170);}
-    100% {color: rgb(237, 255, 167);}
-}
-.thank{
-    font-size: 45px;
-    color:rgb(13, 255, 13);
-}
-.fonne{
-    animation: OMG 100s ease-in-out;
-}
-@keyframes OMG {
-    0% {background: blue;}
-    10% {background: rgb(255, 249, 160);}
-    20% {background: rgba(34, 74, 87, 0.978);}
-    30% {background: rgb(0, 217, 255);}
-    40% {background: rgb(255, 128, 0);}
-    50% {background: rgb(70, 255, 97);}
-    60% {background: rgb(193, 58, 255);}
-    70% {background: rgb(255, 13, 215);}
-    80% {background: rgb(255, 157, 157);}
-    90% {background: rgb(0, 255, 102);}
-    100% {background: rgb(205, 255, 175);}
-}
+        <!-- СЧЁТЧИК -->
+        <div class="score-panel">
+            <div class="flowers-count">
+                <span>🌷</span>
+                <span id="flowerCounter">0</span>
+            </div>
+            <div class="bonus-info">
+                <div class="badge" id="clickPowerBadge">💪 <strong id="clickPowerValue">1</strong> цв/клик</div>
+            </div>
+        </div>
 
-        </style>
-        <div id = "press">ПОЖЕЛАТЬ ( всего пять )</div>
-       <p id = "raibow1">желаю стремления к своим желаниям</p>
-        <p id = "raibow2">желаю счастливой жизни</p>
-        <p id = "raibow3">желаю чтоб все желания сбылись!</p>
-        <p id = "raibow4">желаю самой лучшей истории жизни</p>
-        <p id = "raibow5">желаю желаю чтоб не было грустно и тоскливо</p>
-<footer>
-    <p>.</p>
-     <p>.</p>
-      <p>.</p>
+        <!-- КОРЗИНА + КНОПКА -->
+        <div class="basket-zone" id="basketZone">
+            <div class="fall-area" id="fallArea"></div>
+            <div class="basket-img">🧺💐</div>
+        </div>
+        <button class="click-button" id="clickButton">
+            <span>➕</span> Положить в корзину <span>🌸</span>
+        </button>
 
-      
-         <p>.</p>
-          <p>.</p>
+        <!-- МАГАЗИН УЛУЧШЕНИЙ -->
+        <div class="shop">
+            <!-- upgrade 1: +1 за клик -->
+            <div class="upgrade-card">
+                <h3>🌼 +1 за клик</h3>
+                <p>навсегда</p>
+                <div class="price" id="price1Display">🌷 100</div>
+                <button class="buy-btn" id="buyUpgrade1Btn">Купить</button>
+            </div>
+            <!-- upgrade 2: финальный — 1000 цветков -->
+            <div class="upgrade-card">
+                <h3>💐 ФИНАЛ 💐</h3>
+                <p>С 8 МАРТА!!!</p>
+                <div class="price" id="price2Display">🌷 1000</div>
+                <button class="buy-btn" id="buyUpgrade2Btn">Купить</button>
+            </div>
+        </div>
+        <footer>✨ нажми 1000 раз и случится чудо ✨</footer>
+    </div>
 
-           <p>.</p>
-            <p>.</p>
-             <p>.</p>
-              <p>.</p>
-               <p>.</p>
-                <p>.</p>
-                 <p>.</p>
-                  <p>.</p>
-                   <p>.</p>
-                    <p>.</p>
-                     <p>.</p>
-                      <p>.</p>
-                       <p>.</p>
-                        <p>.</p>
-                         <p>.</p>
-                          <p>.</p>
-                           <p>.</p>
-                            <p>.</p>
-                             <p>.</p>
-                              <p>.</p>
-                               <p>.</p>
-                                <p>.</p>
-                                 <p>.</p>
-                                  <p>.</p>
-                                   <p>.</p>
-                                    <p>.</p>
-                                     <p>.</p>
-                                      <p>.</p>
-                                       <p>.</p>
-                                        <p>.</p>
-                                         <p>.</p>
-                                          <p>.</p>
-                                           <p>.</p>
-                                            <p>.</p>
-                                             <p>.</p>
-                                              <p>.</p>
-                                               <p>.</p>
-                                                <p>.</p>
-                                                 <p>.</p>
-                                                  <p>.</p>
-                                                   <p>.</p>
-                                                    <p>.</p>
-                                                     <p>.</p>
-                                                      <p>.</p>
-                                                       <p>.</p>
-                                                        <p>.</p>
-                                                         <p>.</p>
-                                                          <p>.</p>
-                                                           <p>.</p>
-                                                            <p>.</p>
-                                                             <p>.</p>
-                                                              <p>.</p>
-                                                               <p>.</p>
-                                                                <p>.</p>
-                                                                 <p>.</p>
-                                                                  <p>.</p>
-                                                                   <p>.</p>
-      </var>
-    <p>||||||</p>
-    <p>||||||</p>
-    <p>||||||</p>
-    <p>||||||</p>
-    <p>||||||</p>
+    <!-- скрытое место для victory (вставим динамически) -->
+    <script>
+        (function() {
+            // ---------- СОСТОЯНИЕ ----------
+            let flowers = 0;                 // текущее кол-во цветов
+            let clickPower = 1;               // цветков за клик
+            const BASKET_CAPACITY_FINISH = 1000;   // целевая сумма для финала
 
+            // DOM элементы
+            const flowerCounterSpan = document.getElementById('flowerCounter');
+            const clickPowerValueSpan = document.getElementById('clickPowerValue');
+            const clickPowerBadge = document.getElementById('clickPowerBadge');
+            const clickButton = document.getElementById('clickButton');
+            const basketZone = document.getElementById('basketZone');
+            const fallArea = document.getElementById('fallArea');
+            const buyUpgrade1Btn = document.getElementById('buyUpgrade1Btn');
+            const buyUpgrade2Btn = document.getElementById('buyUpgrade2Btn');
+            const price1Display = document.getElementById('price1Display');
+            const price2Display = document.getElementById('price2Display');
 
-    <p>||||||</p>
+            // Массив цветочных эмодзи
+            const flowerEmojis = ['🌷', '🌸', '🌹', '🌺', '🌻', '🌼', '💐', '🌷', '🌸', '🌺', '🌿🌸'];
 
-    <p>||||||</p>
-    <p>||||||</p>
-    <p>||||||</p>
-    <p>||||||</p>
-    <p>||||||</p>
-    <p>|        |||||||||||||||||||</p>
-     <p>|         |||||||||||||||</p>
-      <p>|          |||||||||||</p>
-      <p>|            |||||||</p>
-       <p>|             |||</p>
-       <p>|              |</p>
-        <p class = "thank">Мам, могу много раз повторять... но не могу прикратить... спасибо, что ты, есть!</p>
-        </footer>
-        <script>
-const press = document.getElementById('press')
-const r1 = document.getElementById('raibow1')
-const r2 = document.getElementById('raibow2')
-const r3 = document.getElementById('raibow3')
-const r4 = document.getElementById('raibow4')
-const r5 = document.getElementById('raibow5')
+            // Флаг победы (чтобы не вызывать много раз)
+            let gameFinished = false;
 
-press.onclick = Yea;
-r1.style.display = 'none'
-r2.style.display = 'none'
-r3.style.display = 'none'
-r4.style.display = 'none'
-r5.style.display = 'none'
+            // Обновление интерфейса (счетчик, сила клика)
+            function updateUI() {
+                flowerCounterSpan.innerText = flowers;
+                clickPowerValueSpan.innerText = clickPower;
 
-function Yea(){
-    var r = Math.floor(Math.random() * (5-1 + 1)) + 1;
-    if (r == 1){
-r1.style.display = 'block'
-r2.style.display = 'none'
-r3.style.display = 'none'
-r4.style.display = 'none'
-r5.style.display = 'none'
-    }if (r == 2){
-        r1.style.display = 'none'
-r2.style.display = 'block'
-r3.style.display = 'none'
-r4.style.display = 'none'
-r5.style.display = 'none'
-    }
-    if (r == 3){
-     r1.style.display = 'none'
-r2.style.display = 'none'
-r3.style.display = 'block'
-r4.style.display = 'none'
-r5.style.display = 'none'   
-    }
-    if (r == 4){
-        r1.style.display = 'none'
-r2.style.display = 'none'
-r3.style.display = 'none'
-r4.style.display = 'block'
-r5.style.display = 'none'
-    }
-    if (r == 5){
-        r1.style.display = 'none'
-r2.style.display = 'none'
-r3.style.display = 'none'
-r4.style.display = 'none'
-r5.style.display = 'block'
-    }
+                // Доступность кнопок магазина
+                // upgrade1 доступен если цветов >= 100, игра не закончена
+                if (!gameFinished) {
+                    buyUpgrade1Btn.disabled = (flowers < 100);
+                    buyUpgrade2Btn.disabled = (flowers < 1000);
+                } else {
+                    buyUpgrade1Btn.disabled = true;
+                    buyUpgrade2Btn.disabled = true;
+                }
+            }
 
-}
-        </script>
-    </body>
+            // Функция показа конфетти и С 8 МАРИА!!! на весь экран
+            function showVictory() {
+                if (gameFinished) return;
+                gameFinished = true;
+
+                // Деактивируем кнопки (уже при победе)
+                buyUpgrade1Btn.disabled = true;
+                buyUpgrade2Btn.disabled = true;
+
+                // Создаем оверлей
+                const overlay = document.createElement('div');
+                overlay.className = 'victory-overlay';
+                overlay.id = 'victoryOverlay';
+                overlay.innerHTML = `
+                    <div class="victory-text">🌷 С 8 МАРИА!!! 🌷</div>
+                    <div class="victory-sub">💐 Ты собрала целый букет! 💐</div>
+                    <button class="reset-btn" id="resetGameBtn">🎉 Играть ещё 🎉</button>
+                `;
+                document.body.appendChild(overlay);
+
+                // Иммерсивные цветочки (дополнительное веселье)
+                for (let i = 0; i < 30; i++) {
+                    setTimeout(() => {
+                        const splash = document.createElement('span');
+                        splash.innerText = flowerEmojis[Math.floor(Math.random() * flowerEmojis.length)];
+                        splash.style.position = 'fixed';
+                        splash.style.left = Math.random() * 100 + '%';
+                        splash.style.top = Math.random() * 100 + '%';
+                        splash.style.fontSize = (30 + Math.random() * 50) + 'px';
+                        splash.style.transform = 'rotate(' + Math.random() * 30 + 'deg)';
+                        splash.style.pointerEvents = 'none';
+                        splash.style.zIndex = 1001;
+                        splash.style.opacity = '0.9';
+                        splash.style.animation = 'pop 0.8s ease-out';
+                        document.body.appendChild(splash);
+                        setTimeout(() => splash.remove(), 800);
+                    }, i * 40);
+                }
+
+                // Кнопка сброса внутри оверлея
+                document.getElementById('resetGameBtn').addEventListener('click', function() {
+                    overlay.remove();
+                    resetGame();
+                });
+            }
+
+            // Сброс игры (без перезагрузки)
+            function resetGame() {
+                flowers = 0;
+                clickPower = 1;
+                gameFinished = false;
+                updateUI();
+
+                // очистим область падения от возможных остаточных эмодзи
+                // но они сами исчезают, просто удалим внутренние спаны (на всякий случай)
+                const fallChildren = fallArea.children;
+                for (let i = fallChildren.length - 1; i >= 0; i--) {
+                    fallChildren[i].remove();
+                }
+
+                // разблокировка кнопок происходит в updateUI
+                updateUI();
+            }
+
+            // Функция клика (основная)
+            function handleClick() {
+                if (gameFinished) return;  // игра окончена
+
+                // добавляем цветы
+                flowers += clickPower;
+
+                // рандомный спаун цветка (сыпется в корзину)
+                spawnFallingFlower();
+
+                // обновляем счётчик на экране
+                updateUI();
+
+                // проверка на победу (1000 цветов) — может сработать сразу при покупке, но и тут на всякий случай
+                if (flowers >= 1000 && !gameFinished) {
+                    showVictory();
+                }
+            }
+
+            // Создать падающий цветок (рандомный эмодзи) в зоне корзины
+            function spawnFallingFlower() {
+                const emoji = flowerEmojis[Math.floor(Math.random() * flowerEmojis.length)];
+                const fallingElement = document.createElement('div');
+                fallingElement.className = 'flower-emoji-fall';
+                fallingElement.innerText = emoji;
+
+                // случайная позиция по горизонтали в пределах корзины
+                const basketRect = basketZone.getBoundingClientRect();
+                const containerRect = document.querySelector('.game-container').getBoundingClientRect();
+                // мы будем позиционировать относительно контейнера игры, чтобы не вылетать
+                // но для простоты привяжемся к fallArea (relative)
+                const fallAreaRect = fallArea.getBoundingClientRect();
+
+                // Но падающие эмодзи добавляются в fallArea (position relative)
+                // зададим случайный left в процентах от ширины fallArea
+                const randomLeft = 10 + Math.random() * 80; // %
+                fallingElement.style.left = randomLeft + '%';
+                fallingElement.style.bottom = '80%';  // старт почти вверху
+                fallingElement.style.animationDuration = 0.7 + Math.random() * 0.5 + 's';
+                fallingElement.style.fontSize = (1.8 + Math.random() * 1.5) + 'rem';
+
+                fallArea.appendChild(fallingElement);
+
+                // удаляем после анимации
+                fallingElement.addEventListener('animationend', () => {
+                    if (fallingElement.parentNode) fallingElement.remove();
+                });
+            }
+
+            // ---------- УЛУЧШЕНИЯ ----------
+
+            // 1) Купить +1 за клик (100 цветов)
+            buyUpgrade1Btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (gameFinished) return;
+                if (flowers >= 100) {
+                    flowers -= 100;
+                    clickPower += 1;
+                    updateUI();
+                    // вспышка радости
+                } else {
+                    alert('Не хватает цветочков 🌷');
+                }
+            });
+
+            // 2) Купить финал за 1000
+            buyUpgrade2Btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (gameFinished) return;
+                if (flowers >= 1000) {
+                    flowers -= 1000;  // можно оставить как есть, но при достижении победы пофиг.
+                    // но по логике: за 1000 цветков можно купить ??? = финал. Покажем оду победу
+                    // Цветы потрачены, но появляется ВОТ ОН ПОБЕДНЫЙ ЭКРАН
+                    // Можно даже не тратить, но для честности потратим
+                    updateUI(); 
+                    showVictory();  // вызываем победу
+                } else {
+                    alert('Нужно 1000 цветов для финала! 🌸');
+                }
+            });
+
+            // клик по кнопке положить в корзину
+            clickButton.addEventListener('click', handleClick);
+
+            // Инициализация интерфейса
+            updateUI();
+
+            // Защита: при достижении 1000 цветов вручную (если вдруг купили апгрейд и перевалили) — проверяем
+            // Можно добавить наблюдатель, но проще при апдейте проверять
+            // Немного модифицируем updateUI
+            const originalUpdate = updateUI;
+            updateUI = function() {
+                originalUpdate();
+                if (flowers >= 1000 && !gameFinished) {
+                    showVictory();
+                }
+            };
+
+            // переопределим, чтобы работало
+            flowerCounterSpan.innerText = flowers; // начальное
+
+            // подменим функции в исходных
+            updateUI(); // обновит с новым условием
+
+            // перезапись методов, чтоб везде использовалась новая updateUI
+            // просто присвоим заново
+            const temp = updateUI;
+            updateUI = function() {
+                flowerCounterSpan.innerText = flowers;
+                clickPowerValueSpan.innerText = clickPower;
+                if (!gameFinished) {
+                    buyUpgrade1Btn.disabled = (flowers < 100);
+                    buyUpgrade2Btn.disabled = (flowers < 1000);
+                } else {
+                    buyUpgrade1Btn.disabled = true;
+                    buyUpgrade2Btn.disabled = true;
+                }
+                if (flowers >= 1000 && !gameFinished) {
+                    showVictory();
+                }
+            };
+            updateUI(); // окончательная синхронизация
+
+            // исправляем вызовы внутри обработчиков, чтобы они вызывали новую updateUI
+            // но они и так вызывают обновленную (т.к. функция перезаписана в замыкании)
+            // добавим еще выборочный спавн при старте для теста
+            // Небольшой бонус: при старте, если нажать — работает.
+        })();
+    </script>
+</body>
 </html>
